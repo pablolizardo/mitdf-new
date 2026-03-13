@@ -1,6 +1,6 @@
 import { INoticia, INoticiaSource, INoticiaProcessingResult, INoticiaProcessingSummary } from '../sources/types';
 import { prisma } from '@/lib/db';
-import { Noticia } from '@prisma/client';
+import { classifyNews } from '@/lib/newsClassifier';
 import { INoticiaSourceBaseConfig } from '../sources/config';
 
 export class NoticiasProcessor {
@@ -314,6 +314,24 @@ export class NoticiasProcessor {
           return { added: false, skipped: true };
         }
 
+        // Clasificar noticia (categoría, ciudad, tags) para nuevas cargas
+        const classified = classifyNews({
+          titulo: noticia.titulo,
+          bajada: noticia.bajada,
+          longtext: noticia.longtext,
+        });
+        const ciudad =
+          classified.ciudad ??
+          this.extractCityFromNoticia(noticia, source);
+        const categoria = classified.categoria ?? noticia.categoria ?? undefined;
+        const sourceTags = noticia.tags ?? [];
+        const mergedTags = [
+          ...(classified.tags ?? []),
+          ...sourceTags.filter((t) => t && !classified.tags?.includes(t.toLowerCase().replace(/\s+/g, "-"))),
+        ]
+          .slice(0, 6)
+          .join(",");
+
         // Crear nueva noticia
         await tx.noticia.create({
           data: {
@@ -323,9 +341,9 @@ export class NoticiasProcessor {
             foto: noticia.foto,
             longtext: noticia.longtext,
             medio: noticia.medio,
-            ciudad: this.extractCityFromNoticia(noticia, source),
-            categoria: noticia.categoria,
-            tags: noticia.tags?.join(",") || "",
+            ciudad,
+            categoria,
+            tags: mergedTags || "",
             written_at: noticia.written_at.toString(),
             written_at_date: noticia.written_at,
             created_at: new Date()
