@@ -1,0 +1,151 @@
+# miTDF - Portal de Noticias de Tierra del Fuego
+
+## Sobre el sitio
+
+miTDF es el portal informativo más completo de Tierra del Fuego, Argentina. Proporciona noticias locales, información de servicios esenciales, y contenido relevante para los residentes de Ushuaia, Río Grande y Tolhuin.
+
+- URL base: https://www.mitdf.com.ar
+- Idioma: Español (Argentina)
+- Región: Tierra del Fuego, Antártida e Islas del Atlántico Sur
+- Tipo de contenido: Noticias, servicios locales, información pública
+
+## Estructura de rutas principales
+
+### Noticias
+- `/` - Página principal con noticias destacadas
+- `/noticias` - Listado de todas las noticias
+- `/noticias/[slug]` - Artículo individual de noticia
+- `/archivo` - Archivo de noticias por fecha
+- `/archivo/[date]` - Noticias de una fecha específica
+- `/categoria/[categoria]` - Noticias filtradas por categoría
+- `/buscar/[query]` - Búsqueda de noticias
+
+Categorías disponibles: politica, deportes, economia, cultura, tecnologia, mundo, local, opinion, sociedad, turismo
+
+### Servicios y utilidades
+- `/vuelos/[ciudad]` - Información de vuelos (rio-grande, ushuaia)
+- `/barcaza` - Información de horarios de barcaza
+- `/clima` - Clima actual de Tierra del Fuego y bases antárticas
+- `/colectivos/[ciudad]` - Rutas y horarios de colectivos (rio-grande, ushuaia)
+- `/camaras` - Cámaras en vivo de Tierra del Fuego
+- `/camaras/[ciudad]` - Cámaras por ciudad
+- `/farmacias` - Directorio de farmacias
+- `/telefonos-utiles/[ciudad]` - Teléfonos útiles por ciudad
+- `/directorio/[ciudad]/[oficio]` - Directorio de servicios y profesionales
+- `/el-cambio` - Cotización de dólar y monedas
+- `/eventos` - Calendario de eventos
+- `/cartelera` - Cartelera de cine
+
+### Contenido editorial
+- `/editorial` - Artículos de opinión y análisis
+- `/encuestas` - Encuestas sobre temas de actualidad
+- `/testimonios` - Testimonios de usuarios
+- `/faq` - Preguntas frecuentes
+
+### Representantes públicos
+- `/representantes` - Información sobre representantes
+- `/representantes/diputados` - Diputados provinciales
+- `/representantes/senadores` - Senadores nacionales
+- `/representantes/legisladores` - Legisladores provinciales
+- `/representantes/concejales` - Concejales municipales
+
+### Elecciones
+- `/elecciones` - Información sobre elecciones 2025
+
+### Pulso (contenido premium)
+- `/pulso` - Landing page de Pulso
+- `/pulso/encuestas` - Encuestas de Pulso
+- `/pulso/encuestas/[id]` - Encuesta individual
+- `/pulso/informes` - Informes de Pulso
+- `/pulso/informes/[slug]` - Informe individual
+- `/pulso/whitepapers` - Whitepapers
+- `/pulso/whitepapers/[slug]` - Whitepaper individual
+- `/pulso/insights/[slug]` - Insights y análisis
+- `/pulso/servicios` - Servicios de Pulso
+- `/pulso/metodologia` - Metodología de investigación
+- `/pulso/contacto` - Contacto para Pulso
+
+### Otros
+- `/contacto` - Formulario de contacto
+- `/auspiciar` - Información para auspiciantes
+- `/feeds` - Información sobre feeds RSS
+- `/diario` - Vista de diario
+- `/stream` - Stream en vivo
+- `/staff` - Equipo de miTDF
+
+## Feeds RSS
+
+- `/rss.xml` - Feed principal (50 noticias más recientes)
+- `/rss/trending` - Feed trending (20 noticias más populares)
+- `/rss/[categoria]` - Feed por categoría
+
+## APIs públicas
+
+### Noticias
+- `GET /api/noticias` - Listado de noticias
+- `GET /api/noticias/increment-views` - Incrementar vistas (POST)
+
+### Clima
+- `GET /api/clima` - Datos de clima actualizados
+
+### Vuelos
+- `GET /api/vuelos` - Información de vuelos
+- `GET /api/fetch/vuelos/rg` - Vuelos Río Grande
+- `GET /api/fetch/vuelos/ush` - Vuelos Ushuaia
+
+### Encuestas
+- `GET /api/encuestas/activa` - Encuesta activa
+- `GET /api/encuestas/inline` - Encuestas inline
+- `POST /api/encuestas/votar` - Votar en encuesta
+
+### Otros
+- `GET /api/faq` - Preguntas frecuentes
+- `GET /api/comentarios` - Comentarios
+- `GET /api/ads` - Publicidades
+- `GET /api/revalidate` - Revalidación de cache
+
+## Metadatos y SEO
+
+- Sitemap: https://www.mitdf.com.ar/sitemap.xml
+- Robots.txt: https://www.mitdf.com.ar/robots.txt
+- Open Graph: Configurado para todas las páginas
+- Schema.org: JSON-LD implementado en noticias y páginas principales
+- Twitter Card: Configurado (@mitdf)
+
+## Información técnica
+
+- Framework: Next.js 15.1.9
+- Base de datos: PostgreSQL (Prisma ORM)
+- Hosting: Vercel
+- Revalidación: 900 segundos (15 minutos) para página principal
+- Cache: ISR (Incremental Static Regeneration)
+
+## Contacto
+
+- Email: Disponible en /contacto
+- Twitter: @mitdf
+- Sitio web: https://www.mitdf.com.ar
+
+## Ciudades principales
+
+- Río Grande (RG)
+- Ushuaia (USH)
+- Tolhuin (TOL)
+
+## Contenido especializado
+
+- Noticias locales de Tierra del Fuego
+- Información meteorológica de TDF y bases antárticas
+- Transporte: vuelos, barcaza, colectivos
+- Directorio de servicios y profesionales
+- Información de representantes públicos
+- Elecciones y política local
+- Eventos y cultura local
+
+## Política de contenido
+
+- Fuentes: Múltiples medios locales de Tierra del Fuego
+- Actualización: Contenido actualizado constantemente
+- Archivo: Noticias históricas disponibles desde 2023
+- Categorización: Sistema de categorías y tags
+- Búsqueda: Motor de búsqueda interno

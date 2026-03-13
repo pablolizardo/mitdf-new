@@ -1,0 +1,737 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Config {
+  id        String   @id @default(cuid()) @map("_id")
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  showElecciones Boolean @default(false)
+  showEncuestas  Boolean @default(false)
+  showBarcazas   Boolean @default(false)
+  showCartelera  Boolean @default(false)
+}
+
+model Noticia {
+  id              String    @id @default(cuid()) @map("_id")
+  slug            String    @unique
+  url             String?
+  titulo          String?
+  bajada          String?
+  longtext        String?
+  foto            String?
+  video           String?
+  foto_2          String?
+  foto_3          String?
+  categoria       String?
+  ciudad          String?
+  medio           String?
+  tags            String?
+  badge           Badge?
+  fecha           String?
+  written_at      String?
+  written_at_date DateTime?
+  likes           Int       @default(0)
+  dislikes        Int       @default(0)
+  views           Int       @default(0)
+  created_at      DateTime?
+
+  // Relaciones
+  comentarios Comentario[]
+  reacciones  Reaccion[]
+
+  @@index([written_at_date])
+  @@index([categoria])
+  @@index([written_at_date, views, likes])
+  @@index([views, likes])
+}
+
+model Diario {
+  id         String    @id @default(cuid()) @map("_id")
+  slug       String    @unique
+  nombre     String?
+  img        String?
+  ciudad     String?
+  url        String?
+  medio      String?
+  updated_at DateTime?
+}
+
+enum Badge {
+  URGENTE
+  EN_VIVO
+  ULTIMA_HORA
+  EXCLUSIVO
+  DESARROLLANDO
+  ACTUALIZADO
+  VERIFICADO
+  INVESTIGACION
+  ARCHIVO
+  PREMIUM
+}
+
+enum AdLayout {
+  HORIZONTAL
+  VERTICAL
+  CENTERED
+}
+
+model Reaccion {
+  id          String       @id @default(cuid()) @map("_id")
+  tipo        TipoReaccion
+  noticiaSlug String
+  noticiaId   String
+  ipAddress   String
+  userAgent   String?
+
+  createdAt DateTime @default(now())
+
+  // Relaciones
+  noticia Noticia @relation(fields: [noticiaId], references: [id], onDelete: Cascade)
+
+  // Índice único para evitar múltiples reacciones de la misma IP
+  @@unique([noticiaSlug, ipAddress], name: "noticiaSlug_ipAddress")
+  @@index([noticiaSlug])
+  @@index([noticiaId])
+}
+
+model Comentario {
+  id          String     @id @default(cuid()) @map("_id")
+  contenido   String
+  autor       String
+  email       String?
+  ipAddress   String
+  aprobado    Boolean    @default(false)
+  noticiaSlug String
+  noticiaId   String
+  parentId    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  noticia    Noticia      @relation(fields: [noticiaId], references: [id], onDelete: Cascade)
+  parent     Comentario?  @relation("ComentarioRespuestas", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  respuestas Comentario[] @relation("ComentarioRespuestas")
+
+  @@index([noticiaSlug])
+  @@index([noticiaId])
+  @@index([createdAt])
+}
+
+enum TipoReaccion {
+  LIKE
+  DISLIKE
+}
+
+model Encuesta {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  titulo      String
+  descripcion String?
+  activa      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  endedAt     DateTime?
+
+  // Relación con las opciones de la encuesta
+  opciones OpcionEncuesta[]
+  // Relación con los votos
+  votos    VotoEncuesta[]
+}
+
+model OpcionEncuesta {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  texto      String
+  encuestaId String @db.ObjectId
+
+  // Relación con la encuesta
+  encuesta Encuesta       @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+  // Relación con los votos
+  votos    VotoEncuesta[]
+}
+
+model VotoEncuesta {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  opcionId   String   @db.ObjectId
+  encuestaId String   @db.ObjectId
+  ipAddress  String
+  votedAt    DateTime @default(now())
+
+  // Relaciones
+  opcion   OpcionEncuesta @relation(fields: [opcionId], references: [id])
+  encuesta Encuesta       @relation(fields: [encuestaId], references: [id])
+
+  // Índice compuesto para evitar votos duplicados por IP en la misma encuesta
+  @@unique([encuestaId, ipAddress])
+}
+
+model Ad {
+  id          String    @id @default(cuid()) @map("_id")
+  cliente     String
+  titulo      String
+  link        String
+  fechaInicio DateTime
+  fechaFin    DateTime
+  importancia Int       @default(1)
+  layout      AdLayout
+  thumb       String?
+  imagen      String?
+  activo      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([activo, fechaInicio, fechaFin])
+  @@index([layout, activo])
+}
+
+model Editorial {
+  id        String    @id @default(cuid()) @map("_id")
+  title     String
+  content   String
+  date      DateTime  @default(now())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@index([date])
+}
+
+model VotoPartido {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  partidoId  String
+  tipoVoto   String
+  eleccionId String
+  ipAddress  String
+  votedAt    DateTime @default(now())
+
+  // Índice compuesto para evitar votos duplicados por IP en la misma elección y tipo de voto
+  @@unique([eleccionId, tipoVoto, ipAddress])
+}
+
+model FAQ {
+  id        String   @id @default(cuid()) @map("_id")
+  pregunta  String
+  respuesta String
+  orden     Int      @default(0)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orden])
+  @@index([activo])
+}
+
+model Testimonio {
+  id        String   @id @default(cuid()) @map("_id")
+  nombre    String
+  contenido String
+  ciudad    String?
+  activo    Boolean  @default(true)
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orden])
+  @@index([activo])
+}
+
+model Directorio {
+  id        String   @id @default(cuid()) @map("_id")
+  ciudad    String
+  titulo    String
+  name      String
+  telefono  String?
+  email     String?
+  web       String?
+  facebook  String?
+  instagram String?
+  logo      String?
+  premium   Boolean  @default(false)
+  details   String?
+  activo    Boolean  @default(true)
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([ciudad])
+  @@index([titulo])
+  @@index([activo])
+}
+
+model Telefono {
+  id        String   @id @default(cuid()) @map("_id")
+  nom       String
+  dir       String?
+  tel       String
+  ciudad_id Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([ciudad_id])
+}
+
+model Medio {
+  id        String   @id @default(cuid()) @map("_id")
+  nombre    String   @unique
+  color     String
+  image     String
+  iconName  String?
+  activo    Boolean  @default(true)
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([activo])
+}
+
+model Link {
+  id          String   @id @default(cuid()) @map("_id")
+  href        String   @unique
+  label       String
+  description String?
+  iconName    String?
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  experimental Boolean @default(false)
+  isNew       Boolean  @default(false)
+  orden       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([active])
+  @@index([featured])
+}
+
+model Diputado {
+  id              String   @id @default(cuid()) @map("_id")
+  apellido        String
+  nombre          String
+  provincia       String
+  inicia_mandato  String?
+  finaliza_mandato String?
+  bloque          String?
+  leyenda         String?
+  foto            String?
+  email           String?
+  telefono        String?
+  facebook        String?
+  twitter         String?
+  instagram       String?
+  youtube         String?
+  linkedin        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([provincia])
+  @@index([bloque])
+}
+
+model DiputadoConfig {
+  id        String   @id @default(cuid()) @map("_id")
+  bloque    String   @unique
+  color     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Senador {
+  id        String   @id @default(cuid()) @map("_id")
+  senado_id String?  @unique
+  bloque    String?
+  apellido  String
+  nombre    String
+  provincia String
+  alianza   String?
+  d_legal   String?
+  c_legal   String?
+  d_real    String?
+  c_real    String?
+  email     String?
+  telefono  String?
+  foto      String?
+  facebook  String?
+  twitter   String?
+  instagram String?
+  youtube   String?
+  linkedin  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([provincia])
+  @@index([bloque])
+}
+
+model SenadorConfig {
+  id        String   @id @default(cuid()) @map("_id")
+  bloque    String   @unique
+  color     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Legislador {
+  id              String   @id @default(cuid()) @map("_id")
+  apellido        String
+  nombre          String
+  bloque          String?
+  partido         String?
+  es_presidente_bloque Boolean @default(false)
+  periodo         String?
+  foto            String?
+  facebook        String?
+  twitter         String?
+  instagram       String?
+  youtube         String?
+  linkedin        String?
+  email           String?
+  telefono        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([bloque])
+  @@index([partido])
+}
+
+model LegisladorConfig {
+  id        String   @id @default(cuid()) @map("_id")
+  bloque    String   @unique
+  color     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Categoria {
+  id        String   @id @default(cuid()) @map("_id")
+  nombre    String   @unique
+  color     String
+  iconName  String?
+  activo    Boolean  @default(true)
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([activo])
+}
+
+model Candidato {
+  id        String   @id @default(cuid()) @map("_id")
+  alianza   String
+  nombre    String
+  color     String
+  lista     String
+  logo      String
+  tipo      String
+  candidatos Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([alianza])
+  @@index([tipo])
+}
+
+model Camara {
+  id          String   @id @default(cuid()) @map("_id")
+  slug        String   @unique
+  ciudad      String
+  url         String
+  placeholder String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([activo])
+}
+
+model Concejal {
+  id          String   @id @default(cuid()) @map("_id")
+  nombre      String
+  apellido    String
+  ciudad      String
+  cargo       String?
+  partido     String?
+  bloque      String?
+  email       String?
+  telefono    String?
+  foto        String?
+  biografia   String?
+  formacion   String?
+  proyectos   Json?
+  facebook    String?
+  twitter     String?
+  instagram   String?
+  linkedin    String?
+  youtube     String?
+  activo      Boolean  @default(true)
+  orden       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([ciudad])
+  @@index([partido])
+  @@index([activo])
+}
+
+enum PulsoStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PulsoCity {
+  USHUAIA
+  RIO_GRANDE
+  TOLHUIN
+}
+
+enum PulsoAgeRange {
+  RANGE_18_24
+  RANGE_25_34
+  RANGE_35_44
+  RANGE_45_54
+  RANGE_55_64
+  RANGE_65_PLUS
+}
+
+enum PulsoGender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum PulsoContentAccess {
+  PUBLIC
+  GATED
+  PAID
+}
+
+model PulsoSurvey {
+  id                    String            @id @default(cuid()) @map("_id")
+  title                 String
+  description           String?
+  status                PulsoStatus       @default(DRAFT)
+  isNonProbabilistic    Boolean           @default(true)
+  disclaimer            String?
+  legalDisclaimer       String?
+  publishedAt           DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  questions             PulsoQuestion[]
+  responses             PulsoResponse[]
+  sampleMeta            PulsoSampleMeta[]
+
+  @@index([status])
+  @@index([publishedAt])
+  @@index([createdAt])
+}
+
+model PulsoQuestion {
+  id                    String            @id @default(cuid()) @map("_id")
+  surveyId              String
+  order                 Int
+  questionText          String
+  questionType          String
+  options               Json?
+  required              Boolean           @default(false)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  survey                PulsoSurvey      @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  responses             PulsoResponse[]
+
+  @@index([surveyId])
+  @@index([order])
+}
+
+model PulsoResponse {
+  id                    String            @id @default(cuid()) @map("_id")
+  surveyId              String
+  questionId            String
+  responseValue         String
+  responseData          Json?
+  isAnonymous           Boolean           @default(true)
+  city                  PulsoCity?
+  ageRange              PulsoAgeRange?
+  gender                PulsoGender?
+  ipAddress             String?
+  userAgent             String?
+  createdAt             DateTime          @default(now())
+
+  survey                PulsoSurvey      @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  question              PulsoQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([surveyId])
+  @@index([questionId])
+  @@index([city])
+  @@index([createdAt])
+}
+
+model PulsoSampleMeta {
+  id                    String            @id @default(cuid()) @map("_id")
+  surveyId              String
+  totalResponses        Int               @default(0)
+  city                  PulsoCity?
+  ageRange              PulsoAgeRange?
+  gender                PulsoGender?
+  metadata              Json?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  survey                PulsoSurvey      @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@index([surveyId])
+  @@index([city])
+}
+
+model PulsoReport {
+  id                    String            @id @default(cuid()) @map("_id")
+  title                 String
+  slug                  String            @unique
+  description           String?
+  content               String?
+  summary               String?
+  city                  PulsoCity?
+  status                PulsoStatus      @default(DRAFT)
+  accessLevel           PulsoContentAccess @default(PUBLIC)
+  disclaimer            String?
+  legalDisclaimer       String?
+  featuredImage         String?
+  publishedAt           DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([status])
+  @@index([city])
+  @@index([publishedAt])
+}
+
+model PulsoWhitepaper {
+  id                    String            @id @default(cuid()) @map("_id")
+  title                 String
+  slug                  String            @unique
+  description           String?
+  fileUrl               String
+  accessLevel           PulsoContentAccess @default(GATED)
+  status                PulsoStatus      @default(DRAFT)
+  disclaimer            String?
+  legalDisclaimer       String?
+  featuredImage         String?
+  publishedAt           DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  downloads             PulsoDownloadLog[]
+
+  @@index([status])
+  @@index([publishedAt])
+}
+
+model PulsoInsight {
+  id                    String            @id @default(cuid()) @map("_id")
+  title                 String
+  slug                  String            @unique
+  content               String?
+  summary               String?
+  city                  PulsoCity?
+  status                PulsoStatus      @default(DRAFT)
+  accessLevel           PulsoContentAccess @default(PUBLIC)
+  disclaimer            String?
+  featuredImage         String?
+  publishedAt           DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([status])
+  @@index([city])
+  @@index([publishedAt])
+}
+
+model PulsoLead {
+  id                    String            @id @default(cuid()) @map("_id")
+  name                  String
+  email                 String
+  phone                 String?
+  company               String?
+  message               String?
+  source                 String?
+  status                 String           @default("NEW")
+  metadata               Json?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model PulsoNewsletterSubscriber {
+  id                    String            @id @default(cuid()) @map("_id")
+  email                 String            @unique
+  name                  String?
+  city                  PulsoCity?
+  subscribedAt          DateTime         @default(now())
+  unsubscribedAt        DateTime?
+  isActive              Boolean           @default(true)
+  metadata               Json?
+
+  @@index([isActive])
+  @@index([subscribedAt])
+}
+
+model PulsoDownloadLog {
+  id                    String            @id @default(cuid()) @map("_id")
+  whitepaperId          String
+  email                 String
+  ipAddress             String?
+  userAgent             String?
+  downloadedAt          DateTime         @default(now())
+
+  whitepaper            PulsoWhitepaper  @relation(fields: [whitepaperId], references: [id], onDelete: Cascade)
+
+  @@index([whitepaperId])
+  @@index([email])
+  @@index([downloadedAt])
+}
+
+enum TipoAnunciante {
+  EMPRESA
+  PERSONA
+  ORGANIZACION
+  INSTITUCION
+  OTRO
+  PERSONA_POLITICA
+  AGRUPACION_POLITICA
+}
+
+model AdAnunciante {
+  id              String         @id @default(cuid()) @map("_id")
+  nombre          String
+  direccion       String?
+  tipo            TipoAnunciante
+  ciudad          String?
+  web             String?
+  agrupacionPolitica String?
+  portales        String[]
+  whatsapp        String?
+  telefono        String?
+  email           String?
+  instagram       String?
+  facebook        String?
+  twitter         String?
+  observaciones   String?
+  cantidadMensajes Int          @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([tipo])
+  @@index([email])
+  @@index([ciudad])
+}
