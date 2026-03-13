@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     "Las últimas noticias y servicios de Tierra del Fuego: actualidad, política, sociedad, clima, colectivos, vuelos y más en miTDF.",
 };
 
+/** Revalidar la página principal cada 15 minutos (ISR). */
+export const revalidate = 900;
+
 export default async function Home() {
   const [featured, latest, actualidad, politica, sociedad] = await Promise.all([
     getFeaturedNews(),
