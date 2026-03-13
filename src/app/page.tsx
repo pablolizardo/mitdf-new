@@ -37,10 +37,10 @@ export default async function Home() {
   const sidebarSearch = sidebarExtra.slice(4, 8);
 
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {latestForMarquee.length > 0 && <Marquee noticias={latestForMarquee} />}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,0.9fr)] lg:items-start">
+      <div className="grid gap-6 md:grid-cols-[minmax(0,2fr)_minmax(260px,0.9fr)] md:items-start">
         <section className="space-y-6">
           {featured && (
             <section aria-label="Noticia destacada" className="space-y-3">
@@ -51,26 +51,38 @@ export default async function Home() {
             </section>
           )}
 
-          <section aria-label="Últimas noticias" className="space-y-3">
+          {/* Clima y barcaza: en mobile van después de la noticia principal */}
+          <div className="flex flex-col gap-6 md:hidden">
+            <div id="clima-mobile" className="scroll-mt-20">
+              <WeatherCard />
+            </div>
+            <div id="barcaza-mobile" className="scroll-mt-20">
+              <BarcazaCard />
+            </div>
+          </div>
+
+          <section id="ultimas-noticias" aria-label="Últimas noticias" className="space-y-3 scroll-mt-20">
             <div className="flex items-baseline justify-between gap-2">
               <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Últimas noticias
               </h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              {gridNoticias.slice(0, 12).map((noticia: NoticiaSlim, index: number) => (
-                <NoticiaLink
-                  key={noticia.id}
-                  variant={index < 4 ? "normal" : "small"}
-                  noticia={noticia as any}
-                />
-              ))}
+              {gridNoticias
+                .slice(0, 12)
+                .map((noticia: NoticiaSlim, index: number) => (
+                  <NoticiaLink
+                    key={noticia.id}
+                    variant={index < 4 ? "normal" : "small"}
+                    noticia={noticia as any}
+                  />
+                ))}
             </div>
           </section>
 
           <section
             aria-label="Actualidad y política"
-            className="grid gap-6 lg:grid-cols-2"
+            className="grid gap-6 md:grid-cols-2"
           >
             <div className="space-y-3">
               <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -137,12 +149,18 @@ export default async function Home() {
         </section>
 
         <aside
-          className="space-y-6 lg:pt-1"
+          className="space-y-6 md:pt-1"
           aria-label="Módulos complementarios"
         >
-          <WeatherCard />
-
-          <BarcazaCard />
+          {/* Clima y barcaza: en desktop van en la sidebar */}
+          <div className="hidden md:block space-y-6">
+            <div id="clima-desktop" className="scroll-mt-20">
+              <WeatherCard />
+            </div>
+            <div id="barcaza-desktop" className="scroll-mt-20">
+              <BarcazaCard />
+            </div>
+          </div>
 
           <section className="space-y-3 rounded-lg border bg-card/60 p-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -175,8 +193,9 @@ export default async function Home() {
               Nube de temas
             </h2>
             <p className="text-xs text-muted-foreground">
-              Próximamente: visualización de las palabras y categorías más frecuentes en las noticias
-              recientes para entender rápido de qué se está hablando en miTDF.
+              Próximamente: visualización de las palabras y categorías más
+              frecuentes en las noticias recientes para entender rápido de qué
+              se está hablando en miTDF.
             </p>
             {sidebarCloud.length > 0 && (
               <div className="space-y-1 pt-1">
@@ -196,8 +215,9 @@ export default async function Home() {
               Buscador avanzado
             </h2>
             <p className="text-xs text-muted-foreground">
-              Usá el buscador de la barra superior para encontrar noticias por tema, lugar o medio. En
-              breve vas a tener filtros avanzados desde esta tarjeta.
+              Usá el buscador de la barra superior para encontrar noticias por
+              tema, lugar o medio. En breve vas a tener filtros avanzados desde
+              esta tarjeta.
             </p>
             {sidebarSearch.length > 0 && (
               <div className="space-y-1 pt-1">

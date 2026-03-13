@@ -185,23 +185,6 @@ export default async function NoticiaPage({ params }: PageProps) {
             />
           )}
 
-          {relacionadas.length > 0 && (
-            <section aria-label="Notas relacionadas" className="space-y-3">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                También puede interesarte
-              </h2>
-              <div className="grid gap-4 md:grid-cols-3">
-                {relacionadas.map((relacionada, index) => (
-                  <NoticiaLink
-                    key={relacionada.id}
-                    variant={index === 0 ? "normal" : "small"}
-                    noticia={relacionada as any}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
-
           {latestOthers.length > 0 && (
             <section aria-label="Últimas noticias" className="space-y-3">
               <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -300,10 +283,17 @@ export default async function NoticiaPage({ params }: PageProps) {
             </Card>
           )}
 
+          <CardShare className="w-full" />
+
+          <SearchWebCard
+            name={cleanTitle}
+            description="Explorá más contexto y antecedentes sobre este tema en la web. Recordá contrastar la información."
+          />
+
           {relacionadas.length > 0 && (
-            <section aria-label="Relacionadas" className="space-y-3">
+            <section aria-label="Notas relacionadas" className="space-y-3">
               <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Relacionadas
+                También puede interesarte
               </h2>
               <div className="space-y-2">
                 {relacionadas.slice(0, 4).map((rel) => (
@@ -316,13 +306,6 @@ export default async function NoticiaPage({ params }: PageProps) {
               </div>
             </section>
           )}
-
-          <CardShare className="w-full" />
-
-          <SearchWebCard
-            name={cleanTitle}
-            description="Explorá más contexto y antecedentes sobre este tema en la web. Recordá contrastar la información."
-          />
         </aside>
       </section>
 

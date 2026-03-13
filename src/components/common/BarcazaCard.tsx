@@ -10,7 +10,9 @@ function getHora(cruce: BarcazaCruce): string {
     return cruce.presentacion.split(" ")[1]?.slice(0, 5) ?? cruce.presentacion;
   }
   if (cruce.zarpeOriginal) {
-    return cruce.zarpeOriginal.split(" ")[1]?.slice(0, 5) ?? cruce.zarpeOriginal;
+    return (
+      cruce.zarpeOriginal.split(" ")[1]?.slice(0, 5) ?? cruce.zarpeOriginal
+    );
   }
   return "—";
 }
@@ -65,7 +67,8 @@ export async function BarcazaCard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 text-xs text-muted-foreground">
-          No pudimos obtener el estado actual del cruce. Probá nuevamente en unos minutos.
+          No pudimos obtener el estado actual del cruce. Probá nuevamente en
+          unos minutos.
         </CardContent>
       </Card>
     );
@@ -119,7 +122,7 @@ export async function BarcazaCard() {
             return (
               <div
                 key={index}
-                className="flex items-center justify-between gap-2 rounded-md border px-3 py-1.5"
+                className="flex items-center justify-between gap-2 border-b border-dashed pb-2 last:border-b-0 last:pb-0"
               >
                 <div className="min-w-0 space-y-0.5">
                   <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -146,4 +149,3 @@ export async function BarcazaCard() {
     </Card>
   );
 }
-

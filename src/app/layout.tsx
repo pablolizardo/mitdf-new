@@ -53,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es-AR" className={cn("font-serif", robotoSlab.variable)}>
+    <html lang="es-AR" className={cn("scroll-smooth font-serif", robotoSlab.variable)}>
       <Script
         id="google-tag-manager"
         strategy="afterInteractive"

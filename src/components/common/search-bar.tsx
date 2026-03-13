@@ -86,18 +86,18 @@ const TYPE_COLORS: Record<SuggestionType, string> = {
 
 const ROTATING_PLACEHOLDERS = [
   "Buscar noticias...",
-  "Farmacias de turno en...",
-  "Vuelo a...",
-  "¿Cuál es el clima en...?",
-  "Colectivos en...",
-  "Directorio de...",
-  "Representantes...",
-  "Cámaras en vivo...",
-  "Estado de la barcaza...",
-  "¿A cuánto está el cambio?",
-  "Teléfonos útiles en...",
-  "Encuestas...",
-  "Informes...",
+  // "Farmacias de turno en...",
+  // "Vuelo a...",
+  // "¿Cuál es el clima en...?",
+  // "Colectivos en...",
+  // "Directorio de...",
+  // "Representantes...",
+  // "Cámaras en vivo...",
+  // "Estado de la barcaza...",
+  // "¿A cuánto está el cambio?",
+  // "Teléfonos útiles en...",
+  // "Encuestas...",
+  // "Informes...",
 ];
 
 const getColoredIcon = (
@@ -1101,7 +1101,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative flex items-center w-full z-50">
+    <div className="relative flex items-center flex-1 z-50">
       {!searching ? (
         <Search
           name="search"
@@ -1123,10 +1123,10 @@ const SearchBar = () => {
         onKeyDown={handleKeyPress}
         className={`
           pl-10 pr-4 h-11
-          border-2 transition-all duration-200
+           transition-all duration-200
           ${
             status === "focused" || showSuggestions
-              ? "border-primary/50 bg-background shadow-md shadow-primary/5 ring-2 ring-primary/10"
+              ? "border-primary/50 bg-background shadow-lg shadow-primary/5 ring-2 ring-primary/10"
               : "border-input/50 bg-muted/30 hover:bg-muted/50 hover:border-input"
           }
           placeholder:text-muted-foreground/70
@@ -1141,7 +1141,7 @@ const SearchBar = () => {
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 mt-2 bg-background/95 backdrop-blur-sm border-2 border-primary/20 rounded-lg shadow-xl shadow-primary/10 z-[9999] max-h-96 overflow-y-auto animate-in fade-in-0 zoom-in-95 duration-200"
+          className="absolute top-full left-0 right-0 mt-2 bg-background/95 backdrop-blur-sm  rounded-lg shadow-xl shadow-primary/10 z-[9999] max-h-96 overflow-y-auto animate-in fade-in-0 zoom-in-95 duration-200"
         >
           {suggestions.map((suggestion, index) => (
             <button
