@@ -6,6 +6,8 @@ import {
 } from "@/services/noticias";
 import Marquee from "@/components/common/Marquee";
 import NoticiaLink from "@/components/common/NoticiaLink";
+import { WeatherCard } from "@/components/common/WeatherCard";
+import { BarcazaCard } from "@/components/common/BarcazaCard";
 import { type NoticiaSlim } from "@/types/noticias";
 
 export const metadata: Metadata = {
@@ -138,15 +140,9 @@ export default async function Home() {
           className="space-y-6 lg:pt-1"
           aria-label="Módulos complementarios"
         >
-          <section className="space-y-3 rounded-lg border bg-card/60 p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Clima hoy
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Próximamente vas a poder ver el clima en Ushuaia, Río Grande y
-              Tolhuin directamente desde miTDF.
-            </p>
-          </section>
+          <WeatherCard />
+
+          <BarcazaCard />
 
           <section className="space-y-3 rounded-lg border bg-card/60 p-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

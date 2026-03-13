@@ -146,3 +146,104 @@ export const fetchClimaWttr = async (location: string): Promise<ClimaWttr | null
   }
 }
 
+// --- Fallback a Open-Meteo (API pública sin token) ---
+
+type BasicCoords = { lat: number; lon: number; displayName: string }
+
+// Coordenadas fijas para las localidades que nos interesan
+const FALLBACK_COORDS: Record<string, BasicCoords> = {
+  ushuaia: { lat: -54.8019, lon: -68.3030, displayName: "Ushuaia" },
+  "rio grande": { lat: -53.7877, lon: -67.7095, displayName: "Río Grande" },
+  tolhuin: { lat: -54.5092, lon: -67.1950, displayName: "Tolhuin" },
+  antartida: { lat: -64.2380, lon: -56.6260, displayName: "Antártida" },
+  "islas malvinas": { lat: -51.7000, lon: -57.8500, displayName: "Islas Malvinas" },
+  "islas malvinas argentinas": { lat: -51.7000, lon: -57.8500, displayName: "Islas Malvinas" },
+}
+
+async function fetchClimaOpenMeteo(location: string): Promise<ClimaWttr | null> {
+  const key = location.toLowerCase()
+  const coords = FALLBACK_COORDS[key]
+  if (!coords) return null
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true`
+    const res = await fetch(url, {
+      next: { revalidate: 1800 },
+    })
+
+    if (!res.ok) {
+      console.error(`Open-Meteo error for ${location}:`, res.status)
+      return null
+    }
+
+    const data = await res.json()
+    if (!data.current_weather) return null
+
+    const current = data.current_weather as {
+      temperature: number
+      windspeed: number
+      winddirection: number
+      weathercode: number
+      is_day?: number
+      time: string
+    }
+
+    const now = new Date()
+
+    return {
+      location: {
+        name: coords.displayName,
+        region: "",
+        country: "Argentina",
+        lat: coords.lat,
+        lon: coords.lon,
+        tz_id: data.timezone || "UTC",
+        localtime_epoch: Math.floor(now.getTime() / 1000),
+        localtime: current.time || now.toISOString(),
+      },
+      current: {
+        last_updated_epoch: Math.floor(now.getTime() / 1000),
+        last_updated: current.time || now.toISOString(),
+        temp_c: current.temperature,
+        temp_f: current.temperature * 9 / 5 + 32,
+        is_day: current.is_day ?? 1,
+        condition: {
+          text: "Condiciones actuales",
+          icon: "https://cdn.weatherapi.com/weather/64x64/day/113.png",
+          code: current.weathercode ?? 1000,
+        },
+        wind_mph: current.windspeed / 1.609,
+        wind_kph: current.windspeed,
+        wind_degree: current.winddirection,
+        wind_dir: "",
+        pressure_mb: 0,
+        pressure_in: 0,
+        precip_mm: 0,
+        precip_in: 0,
+        humidity: 0,
+        cloud: 0,
+        feelslike_c: current.temperature,
+        feelslike_f: current.temperature * 9 / 5 + 32,
+        vis_km: 0,
+        vis_miles: 0,
+        uv: 0,
+        gust_mph: 0,
+        gust_kph: 0,
+      },
+    }
+  } catch (error) {
+    console.error(`Error fetching fallback clima for ${location}:`, error)
+    return null
+  }
+}
+
+/**
+ * Versión robusta: intenta wttr.in y, si falla o devuelve null,
+ * usa Open-Meteo como API de clima gratuita.
+ */
+export const fetchClimaWttrWithFallback = async (location: string): Promise<ClimaWttr | null> => {
+  const primary = await fetchClimaWttr(location)
+  if (primary) return primary
+  return fetchClimaOpenMeteo(location)
+}
+

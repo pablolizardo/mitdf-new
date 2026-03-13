@@ -75,10 +75,8 @@ export default function RootLayout({
       >
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
-          <main className="flex-1">
-            <div className="mx-auto max-w-6xl px-4 py-6 md:px-6 md:py-8 lg:max-w-7xl lg:px-8">
-              {children}
-            </div>
+          <main className="flex-1 mx-auto max-w-6xl px-4  md:px-6 py-2 lg:max-w-7xl lg:px-8">
+            {children}
           </main>
           <SiteFooter />
         </div>

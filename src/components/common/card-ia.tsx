@@ -30,10 +30,13 @@ export function SearchWebCard({ name, description }: Props) {
   const links = buildSearchLinks(name);
   return (
     <Card size="sm">
-      <CardHeader>
-        <CardTitle>Conocer más sobre {name}</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <Search className="size-3.5" aria-hidden />
+          Buscar más sobre
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="flex flex-col gap-3 pt-0">
         <div className="flex flex-wrap gap-2">
           {links.map(({ label, icon, href }) => (
             <Button key={label} asChild variant="outline" size="sm">
@@ -45,7 +48,9 @@ export function SearchWebCard({ name, description }: Props) {
             </Button>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground">{description ?? `La información en la web puede no ser siempre confiable.`}</p>
+        <p className="text-xs text-muted-foreground">
+          {description ?? `La información en la web puede no ser siempre confiable.`}
+        </p>
       </CardContent>
     </Card>
   );

@@ -4,7 +4,10 @@ import { getNoticiaBySlug, getLatestNews } from "@/services/noticias";
 import NoticiaLink from "@/components/common/NoticiaLink";
 import { CardShare } from "@/components/common/card-share";
 import { SearchWebCard } from "@/components/common/card-ia";
-import { estimateReadingTime } from "@/lib/utils";
+import { cleanArticleHtml, estimateReadingTime } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileText, FolderOpen, MapPin, Tags } from "lucide-react";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -60,16 +63,27 @@ export default async function NoticiaPage({ params }: PageProps) {
   const latestOthers = latest.filter((n) => n.slug !== slug).slice(0, 3);
 
   const cleanTitle =
-    noticia.titulo?.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() ||
-    "miTDF";
+    noticia.titulo
+      ?.replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim() || "miTDF";
 
   const plainText =
     noticia.longtext
       ?.replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")
-      .trim() || noticia.bajada?.replace(/<[^>]+>/g, " ").trim() || "";
+      .trim() ||
+    noticia.bajada?.replace(/<[^>]+>/g, " ").trim() ||
+    "";
   const readingTime =
     plainText.length > 0 ? estimateReadingTime(plainText, "compact") : null;
+
+  const tagsList = noticia.tags
+    ? noticia.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : [];
 
   return (
     <article
@@ -105,11 +119,6 @@ export default async function NoticiaPage({ params }: PageProps) {
       </nav>
 
       <header className="space-y-3">
-        {noticia.categoria && (
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-            {noticia.categoria}
-          </p>
-        )}
         <h1
           className="text-3xl font-serif font-bold leading-tight tracking-tight md:text-4xl"
           dangerouslySetInnerHTML={{ __html: noticia.titulo || "" }}
@@ -126,12 +135,6 @@ export default async function NoticiaPage({ params }: PageProps) {
             <span className="font-medium" itemProp="publisher">
               {noticia.medio}
             </span>
-          )}
-          {noticia.ciudad && (
-            <>
-              <span className="opacity-40">·</span>
-              <span>{noticia.ciudad}</span>
-            </>
           )}
           {noticia.written_at && (
             <>
@@ -171,9 +174,14 @@ export default async function NoticiaPage({ params }: PageProps) {
 
           {noticia.longtext && (
             <section
-              className="prose prose-neutral max-w-none dark:prose-invert whitespace-pre-wrap"
+              className="prose prose-neutral max-w-none dark:prose-invert whitespace-pre-wrap
+                [&_p:first-of-type]:text-lg [&_p:first-of-type]:leading-relaxed [&_p:first-of-type]:font-medium [&_p:first-of-type]:text-foreground/95
+                [&_.article-quote]:border-l-4 [&_.article-quote]:border-primary/50 [&_.article-quote]:pl-4 [&_.article-quote]:italic [&_.article-quote]:text-muted-foreground
+                [&_.article-link]:underline [&_.article-link]:decoration-primary/50 [&_.article-link]:underline-offset-2 hover:[&_.article-link]:decoration-primary"
               itemProp="articleBody"
-              dangerouslySetInnerHTML={{ __html: noticia.longtext }}
+              dangerouslySetInnerHTML={{
+                __html: cleanArticleHtml(noticia.longtext),
+              }}
             />
           )}
 
@@ -213,6 +221,85 @@ export default async function NoticiaPage({ params }: PageProps) {
         </div>
 
         <aside className="space-y-4 md:space-y-6 md:pl-2">
+          {(noticia.categoria || noticia.ciudad || tagsList.length > 0) && (
+            <Card size="sm" className="w-full">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <FileText className="size-3.5" aria-hidden />
+                  Esta nota
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3 pt-0">
+                {noticia.categoria && (
+                  <div className="flex gap-2">
+                    <FolderOpen
+                      className="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <div>
+                      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Categoría
+                      </span>
+                      <div className="mt-0.5">
+                        <Badge
+                          variant="secondary"
+                          className="text-xs font-semibold"
+                        >
+                          {noticia.categoria}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {noticia.ciudad && (
+                  <div className="flex gap-2">
+                    <MapPin
+                      className="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <div>
+                      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Ciudad
+                      </span>
+                      <div className="mt-0.5">
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-medium"
+                        >
+                          {noticia.ciudad}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {tagsList.length > 0 && (
+                  <div className="flex gap-2">
+                    <Tags
+                      className="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Etiquetas
+                      </span>
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        {tagsList.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="text-[11px] font-normal opacity-90"
+                          >
+                            {tag.replace(/-/g, " ")}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {relacionadas.length > 0 && (
             <section aria-label="Relacionadas" className="space-y-3">
               <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Facebook, Link2, Linkedin, Mail, Send } from "lucide-react";
+import { Facebook, Link2, Linkedin, Mail, Send, Share2 } from "lucide-react";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -217,10 +217,13 @@ export function CardShare({
 
   return (
     <Card size="sm" className={cn(className, "overflow-visible")}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <Share2 className="size-3.5" aria-hidden />
+          {title}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-3 pt-0">
         {(variant === "share" || variant === "both") && (
           <div className="flex flex-wrap gap-2">
             {SHARE_NETWORKS.map(({ id, label, Icon, buildUrl }) => (

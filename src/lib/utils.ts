@@ -147,3 +147,39 @@ export const estimateReadingTime = (
 
   return formats[variant];
 };
+
+const URL_REGEX = /(https?:\/\/[^\s<>"]+)/g;
+
+/**
+ * Limpia y enriquece el HTML del cuerpo de una noticia:
+ * - Elimina espacios y saltos de línea al inicio y al final
+ * - Colapsa líneas en blanco repetidas (máximo una línea en blanco entre párrafos)
+ * - Normaliza líneas que solo tienen espacios como líneas en blanco
+ * - Quita espacios y saltos de línea entre etiquetas (ej. entre </p> y <p>)
+ * - Marca párrafos que empiezan con comillas (") o « como cita (class="article-quote")
+ * - Envuelve URLs sueltas en texto con <a href="..." target="_blank" rel="noopener noreferrer">
+ */
+export function cleanArticleHtml(html: string | null | undefined): string {
+  if (html == null || typeof html !== "string") return "";
+  let s = html
+    .replace(/\r\n?/g, "\n") // normalizar saltos de línea
+    .replace(/\n[\t ]+\n/g, "\n\n") // línea solo con espacios/tabs → en blanco
+    .trim(); // espacios/saltos al inicio y final
+  // colapsar 3+ saltos (2+ líneas en blanco) en solo 2 saltos (1 línea en blanco)
+  s = s.replace(/\n{3,}/g, "\n\n");
+  // quitar todo espacio/salto entre etiquetas (elimina líneas en blanco entre </p> y <p>, etc.)
+  s = s.replace(/>\s+</g, "><");
+  // párrafos que empiezan con " o « → marcar como cita para estilos tipo blockquote
+  s = s.replace(/<p>\x22/g, '<p class="article-quote">"');
+  s = s.replace(/<p>«/g, '<p class="article-quote">«');
+  // envolver URLs sueltas en texto (entre etiquetas) con <a>
+  s = s.replace(/>([^<]+)</g, (_, text: string) => {
+    const linked = text.replace(
+      URL_REGEX,
+      (url: string) =>
+        `<a href="${url}" target="_blank" rel="noopener noreferrer" class="article-link">${url}</a>`
+    );
+    return `>${linked}<`;
+  });
+  return s;
+}
