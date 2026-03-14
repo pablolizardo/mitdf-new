@@ -1122,7 +1122,7 @@ const SearchBar = () => {
         onFocus={handleOnFocus}
         onKeyDown={handleKeyPress}
         className={`
-          pl-10 pr-4 h-11
+          pl-10 
            transition-all duration-200
           ${
             status === "focused" || showSuggestions

@@ -20,7 +20,9 @@ const baseSelect = {
   likes: true,
 } satisfies Record<string, boolean>;
 
-export async function getLatestNews(limit: number = 24): Promise<NoticiaSlim[]> {
+export async function getLatestNews(
+  limit: number = 24
+): Promise<NoticiaSlim[]> {
   try {
     const noticias = await prisma.noticia.findMany({
       take: limit,
@@ -83,7 +85,7 @@ export async function getFeaturedNews(): Promise<NoticiaSlim | null> {
 
 export async function getNewsByCategory(
   categoria: string,
-  limit: number = 6,
+  limit: number = 6
 ): Promise<NoticiaSlim[]> {
   try {
     const noticias = await prisma.noticia.findMany({
@@ -132,7 +134,7 @@ export async function getNoticiaBySlug(slug: string) {
 
 export async function searchNoticias(
   query: string,
-  limit: number = 50,
+  limit: number = 50
 ): Promise<NoticiaSlim[]> {
   const q = query.trim();
   if (!q) return [];
@@ -161,5 +163,3 @@ export async function searchNoticias(
     return [];
   }
 }
-
-

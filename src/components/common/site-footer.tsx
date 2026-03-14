@@ -15,10 +15,10 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            href="/archivo"
+            href="/contacto"
             className="transition-colors hover:text-foreground"
           >
-            Archivo
+            Contacto
           </Link>
           <Link
             href="/auspiciar"
@@ -26,10 +26,7 @@ export function SiteFooter() {
           >
             Auspiciar
           </Link>
-          <Link
-            href="/faq"
-            className="transition-colors hover:text-foreground"
-          >
+          <Link href="/faq" className="transition-colors hover:text-foreground">
             Preguntas frecuentes
           </Link>
           <span className="opacity-60">© {new Date().getFullYear()} miTDF</span>
@@ -38,4 +35,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

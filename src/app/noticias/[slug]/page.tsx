@@ -31,21 +31,40 @@ export async function generateMetadata({
     noticia.bajada?.replace(/<[^>]+>/g, "").slice(0, 160) ||
     "Noticias y servicios de Tierra del Fuego en miTDF.";
 
-  const image = noticia.foto || noticia.foto_2 || noticia.foto_3 || undefined;
+  const baseUrl = "https://mitdf.com.ar";
+  const canonicalUrl = `${baseUrl}/noticias/${slug}`;
+
+  const rawImage =
+    noticia.foto || noticia.foto_2 || noticia.foto_3 || undefined;
+  const imageUrl = rawImage
+    ? rawImage.startsWith("http")
+      ? rawImage
+      : `${baseUrl}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`
+    : undefined;
+
+  const ampUrl = `${baseUrl}/noticias/${slug}/amp`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+      types: { "application/amphtml": ampUrl },
+    },
     openGraph: {
       title,
       description,
-      images: image ? [image] : undefined,
+      url: canonicalUrl,
       type: "article",
+      images: imageUrl
+        ? [{ url: imageUrl, alt: noticia.titulo?.replace(/<[^>]+>/g, "") ?? "Noticia" }]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: imageUrl ? [imageUrl] : undefined,
     },
   };
 }
@@ -317,11 +336,81 @@ export default async function NoticiaPage({ params }: PageProps) {
             "@context": "https://schema.org",
             "@type": "NewsArticle",
             headline: noticia.titulo,
-            datePublished: noticia.written_at ?? undefined,
-            articleBody: noticia.longtext ?? undefined,
+            description:
+              noticia.bajada?.replace(/<[^>]+>/g, "").slice(0, 160) ||
+              undefined,
+            image:
+              [noticia.foto, noticia.foto_2, noticia.foto_3].filter(Boolean)
+                .length > 0
+                ? [noticia.foto, noticia.foto_2, noticia.foto_3].filter(Boolean)
+                : undefined,
+            datePublished:
+              noticia.written_at ??
+              noticia.written_at_date?.toISOString() ??
+              undefined,
+            dateModified:
+              noticia.written_at ??
+              noticia.written_at_date?.toISOString() ??
+              undefined,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://mitdf.com.ar/noticias/${slug}`,
+            },
             author: noticia.medio
               ? { "@type": "Organization", name: noticia.medio }
               : undefined,
+            publisher: {
+              "@type": "Organization",
+              name: "miTDF",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://mitdf.com.ar/icon-512.png",
+              },
+            },
+            articleBody: noticia.longtext ?? undefined,
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Inicio",
+                item: "https://mitdf.com.ar",
+              },
+              ...(noticia.categoria
+                ? [
+                    {
+                      "@type": "ListItem",
+                      position: 2,
+                      name: noticia.categoria,
+                      item: `https://mitdf.com.ar/categoria/${encodeURIComponent(
+                        noticia.categoria.toLowerCase()
+                      )}`,
+                    },
+                    {
+                      "@type": "ListItem",
+                      position: 3,
+                      name: cleanTitle,
+                      item: `https://mitdf.com.ar/noticias/${slug}`,
+                    },
+                  ]
+                : [
+                    {
+                      "@type": "ListItem",
+                      position: 2,
+                      name: cleanTitle,
+                      item: `https://mitdf.com.ar/noticias/${slug}`,
+                    },
+                  ]),
+            ],
           }),
         }}
       />

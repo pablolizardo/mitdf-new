@@ -1,0 +1,52 @@
+# miTDF - Portal de Noticias de Tierra del Fuego
+# Descripción para asistentes de IA y motores de respuesta (ChatGPT, Perplexity, etc.)
+# Versión completa: https://www.mitdf.com.ar/llms.txt
+
+## Sobre el sitio
+
+miTDF es el portal informativo más completo de Tierra del Fuego, Argentina. Proporciona noticias locales, información de servicios esenciales, y contenido relevante para los residentes de Ushuaia, Río Grande y Tolhuin.
+
+- URL base: https://www.mitdf.com.ar
+- Idioma: Español (Argentina)
+- Región: Tierra del Fuego, Antártida e Islas del Atlántico Sur
+- Tipo de contenido: Noticias, servicios locales, información pública
+
+## Estructura de rutas principales
+
+### Noticias
+- `/` - Página principal con noticias destacadas
+- `/noticias` - Listado de todas las noticias
+- `/noticias/[slug]` - Artículo individual de noticia
+- `/archivo` - Archivo de noticias por fecha
+- `/categoria/[categoria]` - Noticias filtradas por categoría
+- `/buscar/[query]` - Búsqueda de noticias
+
+Categorías disponibles: politica, deportes, economia, cultura, tecnologia, mundo, local, opinion, sociedad, turismo
+
+### Servicios y utilidades
+- `/barcaza` - Horarios y estado de cruces barcaza Tabsa (Transbordadora Austral Broom)
+- `/farmacias` - Farmacias de turno hoy en Río Grande, Ushuaia y Tolhuin
+- `/vuelos/[ciudad]` - Información de vuelos (rio-grande, ushuaia)
+- `/clima` - Clima actual de Tierra del Fuego y bases antárticas
+- `/colectivos/[ciudad]` - Rutas y horarios de colectivos (rio-grande, ushuaia)
+- `/telefonos-utiles/[ciudad]` - Teléfonos útiles por ciudad
+- `/eventos` - Calendario de eventos
+
+## Metadatos y SEO / AEO
+
+- Sitemap: https://www.mitdf.com.ar/sitemap.xml
+- Robots: https://www.mitdf.com.ar/robots.txt
+- LLMs.txt (descripción completa): https://www.mitdf.com.ar/llms.txt
+- Open Graph y Twitter Card: configurados
+- Schema.org JSON-LD: WebSite, Organization, NewsArticle, BreadcrumbList
+
+## Contacto
+
+- Twitter: @mitdf
+- Sitio web: https://www.mitdf.com.ar
+
+## Ciudades principales
+
+- Río Grande (RG)
+- Ushuaia (USH)
+- Tolhuin (TOL)

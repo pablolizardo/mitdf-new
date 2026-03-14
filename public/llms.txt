@@ -24,12 +24,12 @@ Categorías disponibles: politica, deportes, economia, cultura, tecnologia, mund
 
 ### Servicios y utilidades
 - `/vuelos/[ciudad]` - Información de vuelos (rio-grande, ushuaia)
-- `/barcaza` - Información de horarios de barcaza
+- `/barcaza` - Horarios y estado de cruces barcaza Tabsa (Transbordadora Austral Broom), Primera Angostura, Porvenir - Punta Arenas
 - `/clima` - Clima actual de Tierra del Fuego y bases antárticas
 - `/colectivos/[ciudad]` - Rutas y horarios de colectivos (rio-grande, ushuaia)
 - `/camaras` - Cámaras en vivo de Tierra del Fuego
 - `/camaras/[ciudad]` - Cámaras por ciudad
-- `/farmacias` - Directorio de farmacias
+- `/farmacias` - Farmacias de turno hoy en Río Grande, Ushuaia y Tolhuin
 - `/telefonos-utiles/[ciudad]` - Teléfonos útiles por ciudad
 - `/directorio/[ciudad]/[oficio]` - Directorio de servicios y profesionales
 - `/el-cambio` - Cotización de dólar y monedas
@@ -104,12 +104,13 @@ Categorías disponibles: politica, deportes, economia, cultura, tecnologia, mund
 - `GET /api/ads` - Publicidades
 - `GET /api/revalidate` - Revalidación de cache
 
-## Metadatos y SEO
+## Metadatos y SEO / AEO
 
 - Sitemap: https://www.mitdf.com.ar/sitemap.xml
 - Robots.txt: https://www.mitdf.com.ar/robots.txt
+- ai.txt (para crawlers de IA): https://www.mitdf.com.ar/ai.txt
 - Open Graph: Configurado para todas las páginas
-- Schema.org: JSON-LD implementado en noticias y páginas principales
+- Schema.org: JSON-LD (WebSite, Organization, NewsArticle, BreadcrumbList)
 - Twitter Card: Configurado (@mitdf)
 
 ## Información técnica
