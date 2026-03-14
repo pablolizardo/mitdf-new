@@ -227,6 +227,18 @@ model FAQ {
   @@index([activo])
 }
 
+model PushSubscription {
+  id        String   @id @default(cuid()) @map("_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  farmacias Boolean  @default(true)
+  barcaza   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([farmacias, barcaza])
+}
+
 model Testimonio {
   id        String   @id @default(cuid()) @map("_id")
   nombre    String

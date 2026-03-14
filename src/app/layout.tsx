@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "../lib/utils";
 import { SiteFooter } from "../components/common/site-footer";
 import { SiteHeader } from "../components/common/site-header";
+import { RegisterSw } from "../components/common/register-sw";
 import Script from "next/script";
 
 const robotoSlab = Roboto_Slab({
@@ -57,7 +58,13 @@ export const metadata: Metadata = {
     default: `${siteName} · Noticias y servicios de Tierra del Fuego`,
   },
   description: siteDescription,
+  applicationName: siteName,
   metadataBase: siteUrl,
+  appleWebApp: {
+    capable: true,
+    title: siteName,
+    statusBarStyle: "default",
+  },
   robots: {
     index: true,
     follow: true,
@@ -85,6 +92,9 @@ export default function RootLayout({
   return (
     <html lang="es-AR" className={cn("scroll-smooth font-serif", robotoSlab.variable)}>
       <head>
+        <link rel="apple-touch-icon" href="/mitdf.webp" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="miTDF" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -115,6 +125,7 @@ export default function RootLayout({
             __html: ` window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-SY9K6WPFVK');`,
           }}
         />
+        <RegisterSw />
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1 mx-auto max-w-6xl px-4  md:px-6 py-2 lg:max-w-7xl lg:px-8">

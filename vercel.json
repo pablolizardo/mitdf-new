@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/push/send-daily/farmacias",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/push/send-daily/barcaza",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}
