@@ -8,6 +8,7 @@ import Marquee from "@/components/common/Marquee";
 import NoticiaLink from "@/components/common/NoticiaLink";
 import { WeatherCard } from "@/components/common/WeatherCard";
 import { BarcazaCard } from "@/components/common/BarcazaCard";
+import { FarmaciaTurnoCard } from "@/components/common/FarmaciaTurnoCard";
 import { type NoticiaSlim } from "@/types/noticias";
 
 export const metadata: Metadata = {
@@ -56,12 +57,19 @@ export default async function Home() {
             <div id="clima-mobile" className="scroll-mt-20">
               <WeatherCard />
             </div>
+            <div id="farmacia-mobile" className="scroll-mt-20">
+              <FarmaciaTurnoCard />
+            </div>
             <div id="barcaza-mobile" className="scroll-mt-20">
               <BarcazaCard />
             </div>
           </div>
 
-          <section id="ultimas-noticias" aria-label="Últimas noticias" className="space-y-3 scroll-mt-20">
+          <section
+            id="ultimas-noticias"
+            aria-label="Últimas noticias"
+            className="space-y-3 scroll-mt-20"
+          >
             <div className="flex items-baseline justify-between gap-2">
               <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Últimas noticias
@@ -156,6 +164,9 @@ export default async function Home() {
           <div className="hidden md:block space-y-6">
             <div id="clima-desktop" className="scroll-mt-20">
               <WeatherCard />
+            </div>
+            <div id="farmacia-desktop" className="scroll-mt-20">
+              <FarmaciaTurnoCard />
             </div>
             <div id="barcaza-desktop" className="scroll-mt-20">
               <BarcazaCard />

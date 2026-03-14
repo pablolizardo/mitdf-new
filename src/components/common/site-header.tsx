@@ -5,6 +5,7 @@ import { NewspaperIcon } from "lucide-react";
 import { ClockIcon } from "lucide-react";
 import { SunIcon } from "lucide-react";
 import { ShipIcon } from "lucide-react";
+import { Pill } from "lucide-react";
 const navItems = [
   { href: "/", label: "Noticias", icon: <NewspaperIcon /> },
   {
@@ -36,6 +37,18 @@ const navItems = [
     label: "Barcaza",
     className: "hidden md:flex",
     icon: <ShipIcon />,
+  },
+  {
+    href: "/#farmacia-mobile",
+    label: "Farmacia",
+    className: "md:hidden",
+    icon: <Pill />,
+  },
+  {
+    href: "/#farmacia-desktop",
+    label: "Farmacia",
+    className: "hidden md:flex",
+    icon: <Pill />,
   },
 ];
 

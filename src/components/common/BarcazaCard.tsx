@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { fetchBarcaza } from "@/services/barcaza";
 import type { BarcazaCruce, BarcazaEstadoSimple } from "@/services/types";
 import { Clock, MapPin, Ship } from "lucide-react";
@@ -38,12 +37,19 @@ function getSentido(cruce: BarcazaCruce): string | null {
   return null;
 }
 
-function getEstadoVariant(estado: string): "default" | "secondary" | "outline" {
+/** Clases Tailwind para identificar el estado del cruce (fondo + texto, light + dark). */
+function getEstadoColorClasses(estado: string): string {
   const s = estado.toLowerCase();
-  if (s.includes("normal") || s.includes("operativo")) return "secondary";
-  if (s.includes("suspend") || s.includes("cerrad") || s.includes("no opera"))
-    return "outline";
-  return "default";
+  if (s.includes("normal") || s.includes("operativo")) {
+    return "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-200 dark:border-emerald-800";
+  }
+  if (s.includes("suspend") || s.includes("cerrad") || s.includes("no opera")) {
+    return "bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-950/50 dark:text-rose-200 dark:border-rose-800";
+  }
+  if (s.includes("demora") || s.includes("retraso")) {
+    return "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/50 dark:text-amber-200 dark:border-amber-800";
+  }
+  return "bg-muted text-muted-foreground border-border";
 }
 
 function getResumenEstadoCruce(estado?: BarcazaEstadoSimple[]): string | null {
@@ -60,7 +66,7 @@ export async function BarcazaCard() {
   if (!data || !Array.isArray(data.data) || data.data.length === 0) {
     return (
       <Card size="sm">
-        <CardHeader className="pb-2">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             <MapPin className="size-3.5" aria-hidden />
             Cruce en barcaza
@@ -95,7 +101,7 @@ export async function BarcazaCard() {
 
   return (
     <Card size="sm">
-      <CardHeader className="pb-2">
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           <Ship className="size-3.5" aria-hidden />
           Cruces de barcaza
@@ -105,12 +111,13 @@ export async function BarcazaCard() {
         {estadoPrimera && (
           <div className="flex items-center justify-between text-[11px] text-muted-foreground">
             <span>Primera Angostura</span>
-            <Badge
-              variant={getEstadoVariant(estadoPrimera)}
-              className="text-[11px] font-medium"
+            <span
+              className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${getEstadoColorClasses(
+                estadoPrimera
+              )}`}
             >
               {estadoPrimera}
-            </Badge>
+            </span>
           </div>
         )}
         <div className="space-y-1.5">
@@ -135,12 +142,13 @@ export async function BarcazaCard() {
                     </p>
                   )}
                 </div>
-                <Badge
-                  variant={getEstadoVariant(estado)}
-                  className="shrink-0 text-[11px] font-medium"
+                <span
+                  className={`shrink-0 inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${getEstadoColorClasses(
+                    estado
+                  )}`}
                 >
                   {estado}
-                </Badge>
+                </span>
               </div>
             );
           })}

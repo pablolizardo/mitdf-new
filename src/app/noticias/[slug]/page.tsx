@@ -206,7 +206,7 @@ export default async function NoticiaPage({ params }: PageProps) {
         <aside className="space-y-4 md:space-y-6 md:pl-2">
           {(noticia.categoria || noticia.ciudad || tagsList.length > 0) && (
             <Card size="sm" className="w-full">
-              <CardHeader className="pb-2">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                   <FileText className="size-3.5" aria-hidden />
                   Esta nota

@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   fetchClimaWttrWithFallback,
   type ClimaWttr,
@@ -114,6 +113,67 @@ function translateWeatherToSpanish(text: string): string {
   return text;
 }
 
+/** Clases Tailwind para fondo y texto según tipo de clima (light + dark). */
+function getWeatherColorClasses(code: number, text: string): string {
+  const t = text.toLowerCase();
+  // Despejado / soleado
+  if (
+    code === 1000 ||
+    t.includes("despejado") ||
+    t.includes("clear") ||
+    t.includes("sunny")
+  ) {
+    return " text-amber-600 ";
+  }
+  // Parcialmente nublado
+  if (code === 1003 || t.includes("parcial") || t.includes("partly")) {
+    return " text-slate-600 ";
+  }
+  // Nublado / cubierto
+  if (
+    code === 1006 ||
+    code === 1009 ||
+    t.includes("nublado") ||
+    t.includes("cloudy") ||
+    t.includes("overcast")
+  ) {
+    return " text-slate-600 ";
+  }
+  // Lluvia / llovizna
+  if (
+    t.includes("lluvia") ||
+    t.includes("rain") ||
+    t.includes("drizzle") ||
+    t.includes("llovizna")
+  ) {
+    return " text-sky-600 ";
+  }
+  // Nieve
+  if (
+    t.includes("nieve") ||
+    t.includes("snow") ||
+    t.includes("ventisca") ||
+    t.includes("blizzard")
+  ) {
+    return " text-cyan-600 ";
+  }
+  // Tormenta
+  if (t.includes("tormenta") || t.includes("thunder") || t.includes("storm")) {
+    return " text-violet-600 ";
+  }
+  // Niebla / neblina
+  if (
+    t.includes("niebla") ||
+    t.includes("fog") ||
+    t.includes("mist") ||
+    t.includes("neblina")
+  ) {
+    return " text-zinc-600 ";
+  }
+  // Aguanieve / default
+  return " text-muted-foreground";
+}
+
 const LOCATIONS = [
   "ushuaia, tierra del fuego",
   "rio grande, tierra del fuego",
@@ -163,7 +223,7 @@ export async function WeatherCard() {
 
   return (
     <Card size="sm">
-      <CardHeader className="pb-2">
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           <Cloud className="size-3.5" aria-hidden />
           Clima en la provincia
@@ -195,6 +255,10 @@ export async function WeatherCard() {
             data.current.condition.code,
             descRaw
           );
+          const colorClasses = getWeatherColorClasses(
+            data.current.condition.code,
+            descRaw
+          );
 
           return (
             <div
@@ -202,7 +266,7 @@ export async function WeatherCard() {
               className="flex flex-col gap-1.5 border-b border-dashed pb-2 last:border-b-0 last:pb-0 text-xs relative"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5 font-medium text-foreground">
+                <span className="flex -mb-1 items-center gap-1.5 text-base font-medium text-foreground">
                   <MapPin className="size-3" aria-hidden />
                   {label}
                 </span>
@@ -225,10 +289,11 @@ export async function WeatherCard() {
                   Humedad {data.current.humidity}%
                 </span>
               </div>
-              <div className="flex flex-col items-end gap-1 mt-0.5 absolute bottom-0 right-0 top-0 inset-y-0">
+              <div
+                className={`flex flex-col items-end justify-center gap-0.5 absolute bottom-0 right-0 top-0 inset-y-0 rounded-lg px-2 py-1 min-w-[6rem] ${colorClasses}`}
+              >
                 <ConditionIcon className="size-8 shrink-0" aria-hidden />
-                <span className="text-[11px] text-muted-foreground">
-                  {" "}
+                <span className="text-[11px] font-medium w-24 text-right">
                   {desc}
                 </span>
               </div>

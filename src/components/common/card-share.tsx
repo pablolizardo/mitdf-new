@@ -217,7 +217,7 @@ export function CardShare({
 
   return (
     <Card size="sm" className={cn(className, "overflow-visible")}>
-      <CardHeader className="pb-2">
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           <Share2 className="size-3.5" aria-hidden />
           {title}
