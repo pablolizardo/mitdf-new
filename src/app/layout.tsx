@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google";
+import { Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import { cn } from "../lib/utils";
 import { SiteFooter } from "../components/common/site-footer";
@@ -7,19 +7,11 @@ import { SiteHeader } from "../components/common/site-header";
 import { RegisterSw } from "../components/common/register-sw";
 import Script from "next/script";
 
+// Solo Roboto_Slab usa next/font; Geist se carga por link para evitar errores
+// "Cannot find module '../light'" en builds Docker/Coolify con next/font
 const robotoSlab = Roboto_Slab({
   subsets: ["latin"],
   variable: "--font-serif",
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 const siteName = "miTDF";
@@ -92,6 +84,12 @@ export default function RootLayout({
   return (
     <html lang="es-AR" className={cn("scroll-smooth font-serif", robotoSlab.variable)}>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@100..900&family=Geist+Mono:wght@100..900&display=swap"
+        />
         <link rel="apple-touch-icon" href="/mitdf.webp" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="miTDF" />
@@ -109,8 +107,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background text-foreground antialiased",
-          geistSans.variable,
-          geistMono.variable
+          "font-sans"
         )}
       >
         <Script
